@@ -12,7 +12,7 @@ gulp.task('_less', function(){
         gulp.src('src/less/*.less'),
         less(),
         gulp.dest('dist/css/'),
-        browserSync.stream({match: '**/*.css'})
+        // browserSync.stream({match: '**/*.css'})
     ]);
     combined.on('error',function(e){
         notifier.notify({
@@ -38,10 +38,8 @@ gulp.task('less', [ '_less' ], function () {
 
 gulp.task('livereload', function() {
     gulp.watch("*.html").on("change", browserSync.reload);
-    // var paths = ['*.html'];
-    // gulp.src(paths)
-    //     .pipe(watch(paths))
-    //     .pipe(browserSync.reload());
+    gulp.src('**/*.css')
+        .pipe(browserSync.reload({stream: true}));
 });
 
 gulp.task('watch', function() {
@@ -54,9 +52,11 @@ gulp.task('browserSync', function() {
     server: {
       baseDir: "./"
     },
-    port: 3000,
     open: true,
+    // proxy: "127.0.0.1:8080"
+
   });
+
 });
 
 gulp.task('default', [ 'less' ]);

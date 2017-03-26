@@ -5,12 +5,14 @@ Features:
  * less compile
  * watch
  * notifications
- * livereload
+ * browsersync
+
+# Installation
 
 ```
 npm install gulp-cli -g
 npm install
-gulp
+gulp serve
 ```
 
-visit now [http://localhost:8888/](http://localhost:8888/)
+visit now [http://localhost:300/](http://localhost:300/)
