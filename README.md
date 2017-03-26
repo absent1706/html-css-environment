@@ -15,4 +15,4 @@ npm install
 gulp serve
 ```
 
-visit now [http://localhost:300/](http://localhost:300/)
+visit now [http://localhost:3000/](http://localhost:3000/)

@@ -12,7 +12,7 @@ gulp.task('_less', function(){
         gulp.src('src/less/*.less'),
         less(),
         gulp.dest('dist/css/'),
-        // browserSync.stream({match: '**/*.css'})
+        browserSync.stream({match: '**/*.css'})
     ]);
     combined.on('error',function(e){
         notifier.notify({
