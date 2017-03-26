@@ -1,13 +1,15 @@
 {
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-connect": "^5.0.0",
-    "gulp-less": "^3.3.0",
-    "gulp-livereload": "^3.8.1",
-    "gulp-refresh": "^1.1.0",
-    "gulp-watch": "^4.3.11",
-    "less": "^2.7.2",
-    "node-notifier": "^5.1.2",
-    "stream-combiner2": "^1.1.1"
-  }
+    "scripts": {
+        "serve": "gulp serve",
+        "build": "gulp"
+    },
+    "devDependencies": {
+        "browser-sync": "^2.18.8",
+        "gulp": "^3.9.1",
+        "gulp-less": "^3.3.0",
+        "gulp-watch": "^4.3.11",
+        "less": "^2.7.2",
+        "node-notifier": "^5.1.2",
+        "stream-combiner2": "^1.1.1"
+    }
 }

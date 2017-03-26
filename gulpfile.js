@@ -5,14 +5,14 @@ var watch = require('gulp-watch');
 const notifier = require('node-notifier');
 var path = require('path');
 var combiner = require('stream-combiner2');
-var connect = require('gulp-connect');
+var browserSync = require('browser-sync').create();
 
 gulp.task('_less', function(){
     var combined = combiner.obj([
         gulp.src('src/less/*.less'),
         less(),
         gulp.dest('dist/css/'),
-        connect.reload()
+        browserSync.stream({match: '**/*.css'})
     ]);
     combined.on('error',function(e){
         notifier.notify({
@@ -37,22 +37,27 @@ gulp.task('less', [ '_less' ], function () {
 });
 
 gulp.task('livereload', function() {
-    var paths = ['src/less/*.less', '*.html'];
-    gulp.src(paths)
-        .pipe(watch(paths))
-        .pipe(connect.reload());
+    gulp.watch("*.html").on("change", browserSync.reload);
+    // var paths = ['*.html'];
+    // gulp.src(paths)
+    //     .pipe(watch(paths))
+    //     .pipe(browserSync.reload());
 });
 
 gulp.task('watch', function() {
   gulp.watch('src/less/*.less', ['less']);
 });
 
-gulp.task('connect', function() {
-  connect.server({
-    root: '.',
-    livereload: true,
-    port: 8888
+/* see https://webref.ru/dev/automate-with-gulp/live-reloading */
+gulp.task('browserSync', function() {
+  browserSync.init({
+    server: {
+      baseDir: "./"
+    },
+    port: 3000,
+    open: true,
   });
 });
 
-gulp.task('default', [ 'less', 'connect', 'watch', 'livereload' ]);
+gulp.task('default', [ 'less' ]);
+gulp.task('serve', [ 'less', 'browserSync', 'watch', 'livereload' ]);
