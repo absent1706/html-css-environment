@@ -6,6 +6,7 @@ Features:
  * watch
  * notifications
  * browsersync
+ * shell command
 
 # Installation
 

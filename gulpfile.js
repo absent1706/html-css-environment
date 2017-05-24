@@ -6,6 +6,7 @@ const notifier = require('node-notifier');
 var path = require('path');
 var combiner = require('stream-combiner2');
 var browserSync = require('browser-sync').create();
+const shell = require('gulp-shell');
 
 gulp.task('_less', function(){
     var combined = combiner.obj([
@@ -44,11 +45,29 @@ gulp.task('serve', ['less'], function() {
       },
       open: true,
     });
+    gulp.src('**/*.css').pipe(browserSync.reload({stream: true}));
     
-    gulp.watch("*.html").on("change", browserSync.reload);
-    gulp.src('**/*.css')
-        .pipe(browserSync.reload({stream: true}));
     gulp.watch('src/less/*.less', ['less']);
+    gulp.watch('*.*').on("change", (obj) => {
+        gulp.src(obj.path)
+        .pipe(shell([
+            'echo Hey, you changed <%= file.path %>'
+        ]))        
+    });
+    gulp.watch("*.html").on("change", browserSync.reload);
 });
+
+// gulp.task('example', () => {
+//   return gulp.src('*.html', {read: false})
+//     .pipe(shell([
+//         'echo <%= file.path %>'
+//     ]))
+// })
+
+// gulp.task('watch-html', () => {
+//     return watch('*.html', function () {
+//         gulp.src('css/**/*.css')
+//             .pipe(gulp.dest('build'));    
+// });
 
 gulp.task('default', [ 'serve' ]);
