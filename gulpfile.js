@@ -36,28 +36,19 @@ gulp.task('less', [ '_less' ], function () {
     });
 });
 
-gulp.task('livereload', function() {
+gulp.task('serve', ['less'], function() {
+    /* see https://webref.ru/dev/automate-with-gulp/live-reloading */
+    browserSync.init({
+      server: {
+        baseDir: "./"
+      },
+      open: true,
+    });
+    
     gulp.watch("*.html").on("change", browserSync.reload);
     gulp.src('**/*.css')
         .pipe(browserSync.reload({stream: true}));
+    gulp.watch('src/less/*.less', ['less']);
 });
 
-gulp.task('watch', function() {
-  gulp.watch('src/less/*.less', ['less']);
-});
-
-/* see https://webref.ru/dev/automate-with-gulp/live-reloading */
-gulp.task('browserSync', function() {
-  browserSync.init({
-    server: {
-      baseDir: "./"
-    },
-    open: true,
-    // proxy: "127.0.0.1:8080"
-
-  });
-
-});
-
-gulp.task('default', [ 'less' ]);
-gulp.task('serve', [ 'less', 'browserSync', 'watch', 'livereload' ]);
+gulp.task('default', [ 'serve' ]);
