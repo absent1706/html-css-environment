@@ -10,6 +10,7 @@
     "lazypipe": "^1.0.1",
     "nunjucks": "^3.0.1",
     "run-sequence": "^2.1.0",
-    "through2": "^2.0.3"
+    "through2": "^2.0.3",
+    "gulp-nunjucks-render": "^2.2.1"
   }
 }

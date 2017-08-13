@@ -7,7 +7,7 @@ const shell = require('gulp-shell');
 var notify = require("gulp-notify");
 var lazypipe = require("lazypipe");
 var runSequence = require('run-sequence');
-var nunjucks = require('./gulp-nunjucks');
+var nunjucksRender = require('gulp-nunjucks-render');
 
 var notifyFileProcessedOptions = {
     sound: false,
@@ -22,12 +22,18 @@ var notifyError = notify.onError({
 });
 
 var TEMPLATES_DIR = 'src/templates';
+var nunjucksOptions = {
+    path: TEMPLATES_DIR,
+    data: {
+        // var: 'value'
+    }
+};
 
 /* reusable pipe. note that we all pipes are functions that return, e.g. gulp.dest() */
 var processNunjucks = lazypipe()
-    .pipe(() => {return nunjucks(TEMPLATES_DIR) })
-    .pipe(() => {return gulp.dest('dist/html') }) // or .pipe(gulp.dest, 'dist/html')
-    .pipe(() => {return browserSync.reload({stream: true})});
+    .pipe(() => nunjucksRender(nunjucksOptions))
+    .pipe(() => gulp.dest('dist/html')) // or .pipe(gulp.dest, 'dist/html')
+    .pipe(() => browserSync.reload({stream: true}));
 
 gulp.task('build-css', function(){
     gulp.src('src/scss/main.scss')
