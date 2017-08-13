@@ -1,6 +1,9 @@
-{% extends '_base.njk' %}
+{% from '_utils.njk' import Header %}
 
+{% extends '_base.njk' %}
 {% block body %}
+    {{ Header() }}
+
     <h1>Index</h1>
     <p>Hello, {{ f.name.firstName() }} {{ f.name.lastName() }}!</p>
     {% for foo in range(1, 5) %}
