@@ -56,10 +56,16 @@ gulp.task('build-css', function(){
         .pipe(browserSync.stream())
 });
 
-gulp.task('build-html', function() {
+gulp.task('_build-html', function() {
     // ignore partials like _*.njk
     return gulp.src([TEMPLATES_DIR + '/**/*.njk', '!' + TEMPLATES_DIR + '/**/_*.njk'])
         .pipe(processNunjucks().on('error', notifyError))
+});
+
+gulp.task('build-html', ['_build-html'], function() {
+    // fake gulp.src. it's needed only to use notify in pipe below
+    return gulp.src(__dirname, {read: false})
+        .pipe(notify('All HTML processed'));
 });
 
 gulp.task('browsersync', function() {
