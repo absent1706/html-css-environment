@@ -9,6 +9,7 @@ var lazypipe = require("lazypipe");
 var runSequence = require('run-sequence');
 var nunjucksRender = require('gulp-nunjucks-render');
 var faker = require('faker');
+var clean = require('gulp-clean');
 
 var notifyFileProcessedOptions = {
     sound: false,
@@ -42,6 +43,11 @@ var processNunjucks = lazypipe()
     .pipe(() => gulp.dest('dist/html')) // or .pipe(gulp.dest, 'dist/html')
     .pipe(() => browserSync.reload({stream: true}));
 
+gulp.task('clean-dist-dir', function () {
+    return gulp.src('dist', {read: false})
+        .pipe(clean());
+});
+
 gulp.task('build-css', function(){
     gulp.src('src/scss/main.scss')
         .pipe(sass().on('error', notifyError))
@@ -71,5 +77,5 @@ gulp.task('browsersync', function() {
     });
 });
 
-gulp.task('serve', runSequence('browsersync', ['build-css', 'build-html']));
+gulp.task('serve', runSequence(['clean-dist-dir'], ['browsersync', 'build-css', 'build-html']));
 gulp.task('default', [ 'serve' ]);
