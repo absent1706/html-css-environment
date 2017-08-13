@@ -62,6 +62,7 @@ gulp.task('_build-html', function() {
         .pipe(processNunjucks().on('error', notifyError))
 });
 
+/* Just notify after all HTML processed */
 gulp.task('build-html', ['_build-html'], function() {
     // fake gulp.src. it's needed only to use notify in pipe below
     return gulp.src(__dirname, {read: false})
@@ -74,8 +75,9 @@ gulp.task('browsersync', function() {
       server: "./",
       open: false,
     });
-    gulp.src('**/*.css').pipe(browserSync.reload({stream: true}));
+});
 
+gulp.task('watch', ['build-css', 'build-html'], function() {
     gulp.watch('src/scss/*.scss', ['build-css']);
     // watch template files (excluding partials _*.njk)
     watch([TEMPLATES_DIR + '/**/*.njk', '!' + TEMPLATES_DIR + '/**/_*.njk'], function (file) {
@@ -87,5 +89,5 @@ gulp.task('browsersync', function() {
     gulp.watch(TEMPLATES_DIR + '/**/_*.njk', ['build-html']);
 });
 
-gulp.task('serve', runSequence(['clean-dist-dir'], ['browsersync', 'build-css', 'build-html']));
-gulp.task('default', [ 'serve' ]);
+gulp.task('serve', runSequence(['clean-dist-dir'], ['browsersync', 'watch']));
+gulp.task('default', ['serve']);
