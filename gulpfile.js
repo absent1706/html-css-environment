@@ -1,17 +1,13 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var watch = require('gulp-watch');
-// var util = require("gulp-util");
-const notifier = require('node-notifier');
 var path = require('path');
-var combiner = require('stream-combiner2');
 var browserSync = require('browser-sync').create();
-const nunjucks = require('nunjucks');
 const shell = require('gulp-shell');
-var through = require("through2");
-var gutil = require("gulp-util");
 var notify = require("gulp-notify");
 var lazypipe = require("lazypipe");
+var runSequence = require('run-sequence');
+var nunjucks = require('./gulp-nunjucks');
 
 var notifyFileProcessedOptions = {
     sound: false,
@@ -25,20 +21,15 @@ var notifyError = notify.onError({
     title: "Compile error"
 });
 
-var nj = new nunjucks.Environment(new nunjucks.FileSystemLoader('src/templates', {noCache: true}));
-// var processNunjucks = lazypipe()
-    // .pipe(function() {
-    //     return through.obj(function (file, enc, callback) {
-    //         var html = nj.render(file.path);
-    //
-    //         file.contents = new Buffer(html);
-    //         file.path = gutil.replaceExtension(file.path, '.html');
-    //         callback(null, file)
-    //     });
-    // })
-    // .pipe(gulp.dest, 'dist/html');
+var TEMPLATES_DIR = 'src/templates';
 
-gulp.task('scss', function(){
+/* reusable pipe. note that we all pipes are functions that return, e.g. gulp.dest() */
+var processNunjucks = lazypipe()
+    .pipe(() => {return nunjucks(TEMPLATES_DIR) })
+    .pipe(() => {return gulp.dest('dist/html') }) // or .pipe(gulp.dest, 'dist/html')
+    .pipe(() => {return browserSync.reload({stream: true})});
+
+gulp.task('build-css', function(){
     gulp.src('src/scss/main.scss')
         .pipe(sass().on('error', notifyError))
         .pipe(gulp.dest('dist/css'))
@@ -46,44 +37,26 @@ gulp.task('scss', function(){
         .pipe(browserSync.stream({match: '**/*.css'}))
 });
 
-gulp.task('serve', ['scss'], function() {
+gulp.task('build-html', function() {
+    return gulp.src(TEMPLATES_DIR + '/**/*.njk')
+        .pipe(processNunjucks().on('error', notifyError))
+});
+
+gulp.task('browsersync', function() {
     /* see https://webref.ru/dev/automate-with-gulp/live-reloading */
     browserSync.init({
-      server: {
-        baseDir: "./"
-      },
+      server: "./",
       open: false,
     });
     gulp.src('**/*.css').pipe(browserSync.reload({stream: true}));
-    
-    gulp.watch('src/scss/*.scss', ['scss']);
-    watch('src/templates/**/*.njk', function (file) {
-        gulp.src('src/templates/' + file.relative)
-            .pipe(through.obj(function (file, enc, callback) {
-                // taken from gulp-nunjucks-render
-                var self = this;
-                try {
-                    var data = {};
-                    nj.render(file.relative, data, function (err, html) {
-                        if (err) {
-                            self.emit('error', err);
-                            return callback();
-                        }
-                        file.contents = new Buffer(html);
-                        file.path = gutil.replaceExtension(file.path, '.html');
 
-                        self.push(file);
-                        callback();
-                    });
-                } catch (err) {
-                    self.emit('error', err);
-                    callback();
-                }
-            }).on('error', notifyError))
-            .pipe(gulp.dest('dist/html'))
+    gulp.watch('src/scss/*.scss', ['build-css']);
+    watch(TEMPLATES_DIR + '/**/*.njk', function (file) {
+        gulp.src(TEMPLATES_DIR + '/' + file.relative)
+            .pipe(processNunjucks().on('error', notifyError))
             .pipe(notify(notifyFileProcessedOptions))
-            .pipe(browserSync.reload({stream: true}))
     });
 });
 
+gulp.task('serve', runSequence('browsersync', ['build-css', 'build-html']));
 gulp.task('default', [ 'serve' ]);

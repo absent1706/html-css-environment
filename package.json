@@ -9,7 +9,7 @@
     "gulp-watch": "^4.3.11",
     "lazypipe": "^1.0.1",
     "nunjucks": "^3.0.1",
-    "stream-combiner2": "^1.1.1",
+    "run-sequence": "^2.1.0",
     "through2": "^2.0.3"
   }
 }

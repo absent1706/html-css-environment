@@ -2,18 +2,18 @@
 
 Features:
 
- * less compile
+ * SASS compile
  * watch
- * notifications
+ * notifications (gulp-notify)
  * browsersync
- * shell command
+ * nunjucks->HTML compilation
 
 # Installation
 
 ```
 npm install gulp-cli -g
 npm install
-gulp serve
+gulp
 ```
 
 visit now [http://localhost:3000/](http://localhost:3000/)
