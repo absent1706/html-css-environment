@@ -57,7 +57,8 @@ gulp.task('build-css', function(){
 });
 
 gulp.task('build-html', function() {
-    return gulp.src(TEMPLATES_DIR + '/**/*.njk')
+    // ignore partials like _*.njk
+    return gulp.src([TEMPLATES_DIR + '/**/*.njk', '!' + TEMPLATES_DIR + '/**/_*.njk'])
         .pipe(processNunjucks().on('error', notifyError))
 });
 
@@ -70,11 +71,14 @@ gulp.task('browsersync', function() {
     gulp.src('**/*.css').pipe(browserSync.reload({stream: true}));
 
     gulp.watch('src/scss/*.scss', ['build-css']);
-    watch(TEMPLATES_DIR + '/**/*.njk', function (file) {
+    // watch template files (excluding partials _*.njk)
+    watch([TEMPLATES_DIR + '/**/*.njk', '!' + TEMPLATES_DIR + '/**/_*.njk'], function (file) {
         gulp.src(TEMPLATES_DIR + '/' + file.relative)
             .pipe(processNunjucks().on('error', notifyError))
             .pipe(notify(notifyFileProcessedOptions))
     });
+    // when some partial is changed, recompile ALL HTML
+    gulp.watch(TEMPLATES_DIR + '/**/_*.njk', ['build-html']);
 });
 
 gulp.task('serve', runSequence(['clean-dist-dir'], ['browsersync', 'build-css', 'build-html']));
