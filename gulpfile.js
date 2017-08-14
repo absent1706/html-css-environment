@@ -10,6 +10,13 @@ var runSequence = require('run-sequence');
 var nunjucksRender = require('gulp-nunjucks-render');
 var faker = require('faker');
 var clean = require('gulp-clean');
+var cssnano = require('gulp-cssnano');
+var sourcemaps = require('gulp-sourcemaps');
+var gulpif = require('gulp-if');
+var argv = require('yargs').argv;
+
+/* to enable prod mode type 'gulp SOME-TASK --production' */
+var isProd = argv.production;
 
 var notifyFileProcessedOptions = {
     sound: false,
@@ -50,7 +57,10 @@ gulp.task('clean-dist-dir', function () {
 
 gulp.task('build-css', function(){
     gulp.src('src/scss/main.scss')
+        .pipe(sourcemaps.init())
         .pipe(sass().on('error', notifyError))
+        .pipe(gulpif(isProd, cssnano()))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/css'))
         .pipe(notify(notifyFileProcessedOptions))
         .pipe(browserSync.stream())
