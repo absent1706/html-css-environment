@@ -3,7 +3,6 @@ var sass = require('gulp-sass');
 var watch = require('gulp-watch');
 var path = require('path');
 var browserSync = require('browser-sync').create();
-const shell = require('gulp-shell');
 var notify = require("gulp-notify");
 var lazypipe = require("lazypipe");
 var runSequence = require('run-sequence');
