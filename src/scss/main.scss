@@ -5,16 +5,25 @@ body {
   font-size: 18px;
 }
 
-.class1 {
+.block1 {
   color: red;
+
+  &__element {
+    color: blue;
+  }
+
+  // below properties are incorrect and should be validated by stylelint
+  INCORRECT_PROPERTY: 123;
+  font-size: INCORRECT_VALUE;
+  padding: 0px;
 }
 
-.class2 {
+.block2 {
   color: red;
   /* will be autoprefixed */
   /* doiuse will NOT warn about browser support (we add flexbox to its ignore) */
   display: flex;
-  font-family: "BryantProRegular", 'Helvetica Neue', helvetica, arial, sans-serif, "Helvetica Neue";
+  font-family: "BryantProRegular", 'Helvetica Neue', helvetica, arial, sans-serif;
 }
 
 .img-fit {

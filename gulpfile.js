@@ -17,6 +17,10 @@ var postcss      = require('gulp-postcss');
 var autoprefixer = require('autoprefixer');
 var doiuse = require('doiuse');
 const gutil = require("gulp-util");
+const stylelint = require("stylelint");
+var postcssReporter = require('postcss-reporter');
+var syntax_scss = require('postcss-scss');
+var gulpIgnore = require('gulp-ignore');
 
 /* to enable prod mode type 'gulp SOME-TASK --production' */
 var isProd = argv.production;
@@ -27,19 +31,20 @@ var isProd = argv.production;
  */
 const SUPPORTED_BROWSERS = '> 1%, last 2 versions, ie >= 8';
 
-var postCssPlugins = [
+var postcssPlugins = [
     autoprefixer({browsers: SUPPORTED_BROWSERS}),
     doiuse({
         browsers: SUPPORTED_BROWSERS,
         ignore: ['flexbox'], // an optional array of features to ignore
         onFeatureUsage: function (usageInfo) {
-            gutil.log(gutil.colors.yellow('Incompatible CSS: ') + usageInfo.message)
+            // gutil.log(gutil.colors.yellow('Incompatible CSS: ') + usageInfo.message)
         }
-    })
+    }),
+    postcssReporter(postcssReporterOptions),
 ];
 
 if (isProd) {
-    postCssPlugins.push(cssnano());
+    postcssPlugins.push(cssnano());
 }
 
 var notifyFileProcessedOptions = {
@@ -53,6 +58,8 @@ var notifyError = notify.onError({
     message: "<%= error.message %>",
     title: "Compile error"
 });
+
+var postcssReporterOptions = {clearAllMessages: true};
 
 var TEMPLATES_DIR = 'src/templates';
 var nunjucksOptions = {
@@ -81,37 +88,35 @@ gulp.task('clean-dist-dir', function () {
 
 gulp.task('build-css', function(){
     gulp.src('src/scss/main.scss')
+        .pipe(postcss([stylelint(), postcssReporter(postcssReporterOptions)], {syntax: syntax_scss}))
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', notifyError))
-        .pipe(postcss(postCssPlugins))
+        .pipe(postcss(postcssPlugins).on('error', gutil.log))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/css'))
-        .pipe(notify(notifyFileProcessedOptions))
         .pipe(browserSync.stream())
+        // .pipe(gulpIgnore.exclude('*.css.map'))
+        // .pipe(notify(notifyFileProcessedOptions))
 });
 
-gulp.task('_build-html', function() {
+gulp.task('build-html', function() {
     // ignore partials like _*.njk
     return gulp.src([TEMPLATES_DIR + '/**/*.njk', '!' + TEMPLATES_DIR + '/**/_*.njk'])
         .pipe(processNunjucks().on('error', notifyError))
 });
 
-/* Just notify after all HTML processed */
-gulp.task('build-html', ['_build-html'], function() {
-    // fake gulp.src. it's needed only to use notify in pipe below
-    return gulp.src(__dirname, {read: false})
-        .pipe(notify('All HTML processed'));
-});
 
 gulp.task('browsersync', function() {
     /* see https://webref.ru/dev/automate-with-gulp/live-reloading */
     browserSync.init({
-      server: "./",
+      server: "./dist",
       open: false,
     });
 });
 
-gulp.task('build', runSequence('clean-dist-dir', ['build-css', 'build-html']));
+gulp.task('build', function(callback) {
+    runSequence('clean-dist-dir', ['build-css', 'build-html'], callback)
+});
 
 gulp.task('watch', ['build'], function() {
     gulp.watch('src/scss/*.scss', ['build-css']);
@@ -125,5 +130,14 @@ gulp.task('watch', ['build'], function() {
     gulp.watch(TEMPLATES_DIR + '/**/_*.njk', ['build-html']);
 });
 
-gulp.task('serve', ['browsersync', 'watch']);
+/* Just notify */
+gulp.task('notify-all-done', function() {
+    // fake gulp.src. it's needed only to use notify in pipe below
+    return gulp.src(__dirname, {read: false})
+        .pipe(notify({title: 'All is ready', message: 'Go to http://127.0.0.1:3000/html/ and test it!', sound: false}));
+});
+
+gulp.task('serve', function () {
+    runSequence(['browsersync', 'watch'], 'notify-all-done')
+});
 gulp.task('default', ['serve']);
