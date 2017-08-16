@@ -37,6 +37,7 @@ var postcssPlugins = [
     doiuse({
         browsers: SUPPORTED_BROWSERS,
         ignore: ['flexbox'], // an optional array of features to ignore
+        onFeatureUsage: () => { } // do nothing. postCSS reported will output all info
     }),
     postcssReporter(postcssReporterOptions),
 ];
