@@ -2,6 +2,8 @@
   "dependencies": {
     "autoprefixer": "latest",
     "browser-sync": "^2.18.8",
+    "cssnano": "latest",
+    "doiuse": "^3.0.0",
     "faker": "^4.1.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
@@ -17,7 +19,6 @@
     "nunjucks": "^3.0.1",
     "run-sequence": "^2.1.0",
     "through2": "^2.0.3",
-    "yargs": "latest",
-    "cssnano": "latest"
+    "yargs": "latest"
   }
 }

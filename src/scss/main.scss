@@ -1,15 +1,23 @@
 @import 'vars';
 
 body {
-    color: $color-main;
-    font-size: 18px;
+  color: $color-main;
+  font-size: 18px;
 }
 
 .class1 {
-    color:red;
+  color: red;
 }
+
 .class2 {
-    color:red;
-    display: flex;
-    font-family: "BryantProRegular", 'Helvetica Neue', helvetica, arial, sans-serif, "Helvetica Neue";
+  color: red;
+  /* will be autoprefixed */
+  /* doiuse will NOT warn about browser support (we add flexbox to its ignore) */
+  display: flex;
+  font-family: "BryantProRegular", 'Helvetica Neue', helvetica, arial, sans-serif, "Helvetica Neue";
+}
+
+.img-fit {
+  /* doiuse will warn about browser support */
+  object-fit: scale-down;
 }

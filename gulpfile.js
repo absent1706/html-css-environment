@@ -15,12 +15,27 @@ var gulpif = require('gulp-if');
 var argv = require('yargs').argv;
 var postcss      = require('gulp-postcss');
 var autoprefixer = require('autoprefixer');
+var doiuse = require('doiuse');
+const gutil = require("gulp-util");
 
 /* to enable prod mode type 'gulp SOME-TASK --production' */
 var isProd = argv.production;
 
+/*
+ * See docs https://github.com/ai/browserslist
+ * See exact browser list at http://browserl.ist
+ */
+const SUPPORTED_BROWSERS = '> 1%, last 2 versions, ie >= 8';
+
 var postCssPlugins = [
-    autoprefixer({browsers: 'last 10 versions'}),
+    autoprefixer({browsers: SUPPORTED_BROWSERS}),
+    doiuse({
+        browsers: SUPPORTED_BROWSERS,
+        ignore: ['flexbox'], // an optional array of features to ignore
+        onFeatureUsage: function (usageInfo) {
+            gutil.log(gutil.colors.yellow('Incompatible CSS: ') + usageInfo.message)
+        }
+    })
 ];
 
 if (isProd) {
