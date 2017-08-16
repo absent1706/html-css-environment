@@ -10,13 +10,23 @@ var runSequence = require('run-sequence');
 var nunjucksRender = require('gulp-nunjucks-render');
 var faker = require('faker');
 var clean = require('gulp-clean');
-var cssnano = require('gulp-cssnano');
+var cssnano = require('cssnano');
 var sourcemaps = require('gulp-sourcemaps');
 var gulpif = require('gulp-if');
 var argv = require('yargs').argv;
+var postcss      = require('gulp-postcss');
+var autoprefixer = require('autoprefixer');
 
 /* to enable prod mode type 'gulp SOME-TASK --production' */
 var isProd = argv.production;
+
+var postCssPlugins = [
+    autoprefixer({browsers: 'last 10 versions'}),
+];
+
+if (isProd) {
+    postCssPlugins.push(cssnano());
+}
 
 var notifyFileProcessedOptions = {
     sound: false,
@@ -59,7 +69,7 @@ gulp.task('build-css', function(){
     gulp.src('src/scss/main.scss')
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', notifyError))
-        .pipe(gulpif(isProd, cssnano()))
+        .pipe(postcss(postCssPlugins))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/css'))
         .pipe(notify(notifyFileProcessedOptions))
@@ -87,7 +97,9 @@ gulp.task('browsersync', function() {
     });
 });
 
-gulp.task('watch', ['build-css', 'build-html'], function() {
+gulp.task('build', runSequence('clean-dist-dir', ['build-css', 'build-html']));
+
+gulp.task('watch', ['build'], function() {
     gulp.watch('src/scss/*.scss', ['build-css']);
     // watch template files (excluding partials _*.njk)
     watch([TEMPLATES_DIR + '/**/*.njk', '!' + TEMPLATES_DIR + '/**/_*.njk'], function (file) {
@@ -99,5 +111,5 @@ gulp.task('watch', ['build-css', 'build-html'], function() {
     gulp.watch(TEMPLATES_DIR + '/**/_*.njk', ['build-html']);
 });
 
-gulp.task('serve', runSequence(['clean-dist-dir'], ['browsersync', 'watch']));
+gulp.task('serve', ['browsersync', 'watch']);
 gulp.task('default', ['serve']);

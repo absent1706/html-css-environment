@@ -1,13 +1,14 @@
 {
   "dependencies": {
+    "autoprefixer": "latest",
     "browser-sync": "^2.18.8",
     "faker": "^4.1.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
-    "gulp-cssnano": "latest",
     "gulp-if": "^2.0.2",
     "gulp-notify": "^3.0.0",
     "gulp-nunjucks-render": "^2.2.1",
+    "gulp-postcss": "^7.0.0",
     "gulp-sass": "^3.1.0",
     "gulp-shell": "^0.6.3",
     "gulp-sourcemaps": "^2.6.0",
@@ -17,6 +18,7 @@
     "nunjucks": "^3.0.1",
     "run-sequence": "^2.1.0",
     "through2": "^2.0.3",
-    "yargs": "latest"
+    "yargs": "latest",
+    "cssnano": "latest"
   }
 }
