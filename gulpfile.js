@@ -31,14 +31,12 @@ var isProd = argv.production;
  */
 const SUPPORTED_BROWSERS = '> 1%, last 2 versions, ie >= 8';
 
+var postcssReporterOptions = {clearAllMessages: true};
 var postcssPlugins = [
     autoprefixer({browsers: SUPPORTED_BROWSERS}),
     doiuse({
         browsers: SUPPORTED_BROWSERS,
         ignore: ['flexbox'], // an optional array of features to ignore
-        onFeatureUsage: function (usageInfo) {
-            // gutil.log(gutil.colors.yellow('Incompatible CSS: ') + usageInfo.message)
-        }
     }),
     postcssReporter(postcssReporterOptions),
 ];
@@ -59,9 +57,7 @@ var notifyError = notify.onError({
     title: "Compile error"
 });
 
-var postcssReporterOptions = {clearAllMessages: true};
-
-var TEMPLATES_DIR = 'src/templates';
+var TEMPLATES_DIR = 'src';
 var nunjucksOptions = {
     path: TEMPLATES_DIR,
     data: {
@@ -78,7 +74,7 @@ nunjucksRender.nunjucks.installJinjaCompat();
 /* reusable pipe. note that we all pipes are functions that return, e.g. gulp.dest() */
 var processNunjucks = lazypipe()
     .pipe(() => nunjucksRender(nunjucksOptions))
-    .pipe(() => gulp.dest('dist/html')) // or .pipe(gulp.dest, 'dist/html')
+    .pipe(() => gulp.dest('dist')) // or .pipe(gulp.dest, 'dist/html')
     .pipe(() => browserSync.reload({stream: true}));
 
 gulp.task('clean-dist-dir', function () {
@@ -110,7 +106,7 @@ gulp.task('browsersync', function() {
     /* see https://webref.ru/dev/automate-with-gulp/live-reloading */
     browserSync.init({
       server: "./dist",
-      open: false,
+      // open: false,
     });
 });
 
@@ -130,14 +126,7 @@ gulp.task('watch', ['build'], function() {
     gulp.watch(TEMPLATES_DIR + '/**/_*.njk', ['build-html']);
 });
 
-/* Just notify */
-gulp.task('notify-all-done', function() {
-    // fake gulp.src. it's needed only to use notify in pipe below
-    return gulp.src(__dirname, {read: false})
-        .pipe(notify({title: 'All is ready', message: 'Go to http://127.0.0.1:3000/html/ and test it!', sound: false}));
-});
-
 gulp.task('serve', function () {
-    runSequence(['browsersync', 'watch'], 'notify-all-done')
+    runSequence(['browsersync', 'watch'])
 });
 gulp.task('default', ['serve']);
