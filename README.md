@@ -1,6 +1,8 @@
-# Gulp ready-to-go environment
+# Modern HTML/CSS coding environment
 
-Features:
+Use it as a start point for new HTML/CSS projects.
+
+# Features:
 
  * SASS => CSS compile and watch
  * [`nunjucks`](https://mozilla.github.io/nunjucks/) -> HTML compile and watch
