@@ -5,15 +5,15 @@ Use it as a start point for new HTML/CSS projects.
 # Features:
 
  * SASS => CSS compile and watch
- * [`nunjucks`](https://mozilla.github.io/nunjucks/) -> HTML compile and watch
+ * [nunjucks](https://mozilla.github.io/nunjucks/) -> HTML compile and watch
  * sourcemaps
- * live reload (`browsersync`)
- * notifications (gulp-notify)
+ * live reload ([browsersync](https://browsersync.io/))
+ * notifications (`gulp-notify`)
  * postCSS: 
-   + autoprefixer
-   + SCSS lint (`stylelint`)
-   + warnings about browser CSS support (`doiuse`)
-   + css minification with `cssnano` (only in prod mode)
+   + [autoprefixer](https://github.com/postcss/autoprefixer)
+   + SCSS [stylelint](https://stylelint.io/)
+   + warnings about browser CSS support ([doiuse](https://github.com/anandthakker/doiuse))
+   + css minification with [cssnano](http://cssnano.co/) (only in prod mode)
 
 # Installation
 
