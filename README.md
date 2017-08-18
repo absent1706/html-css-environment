@@ -2,18 +2,32 @@
 
 Features:
 
- * SASS compile
- * watch
+ * SASS => CSS compile and watch
+ * [`nunjucks`](https://mozilla.github.io/nunjucks/) -> HTML compile and watch
+ * sourcemaps
+ * live reload (`browsersync`)
  * notifications (gulp-notify)
- * browsersync
- * nunjucks->HTML compilation
+ * postCSS: 
+   + autoprefixer
+   + SCSS lint (`stylelint`)
+   + warnings about browser CSS support (`doiuse`)
+   + css minification with `cssnano` (only in prod mode)
 
 # Installation
 
 ```
 npm install gulp-cli -g
 npm install
+```
+
+For developing, type
+
+```
 gulp
 ```
 
-visit now [http://localhost:3000/](http://localhost:3000/)
+For production build, type
+
+```
+gulp build --production
+```
